@@ -2,6 +2,15 @@
 
 Create a list of Twitch clips on a given channel
 
+## Example output
+
+```csv
+Title,Date,URL
+super clip one,2023-12-09T14:46:10Z,https://clips.twitch.tv/url1-2zd1OiY4ZvfeP44Q
+Clip Two,2023-11-19T16:57:29Z,https://clips.twitch.tv/url2-2zd1OiY4ZvfeP44Q
+More clip,2023-11-18T21:06:41Z,https://clips.twitch.tv/url3-2zd1OiY4ZvfeP44Q
+```
+
 ## Run via makefile
 
 ### Run for a giving client id & channel
