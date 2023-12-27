@@ -33,7 +33,7 @@ Include a `launch.json` that allow to debug in VS Code
 
 ## LICENSE
 ```
- Copyright (c) 2023 Juan Antonio Medina IglesiasMIT License
+Copyright (c) 2023 Juan Antonio Medina IglesiasMIT License
 
 Copyright (c) 2023 Juan Medina
 
