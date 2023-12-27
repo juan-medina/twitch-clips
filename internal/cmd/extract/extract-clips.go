@@ -26,6 +26,6 @@ package extract
 
 import "fmt"
 
-func Execute() {
-	fmt.Println("extracting twitch clips")
+func Execute(clientId string, channel string) {
+	fmt.Printf("Extracting clips from channel: [%v]\n", channel)
 }

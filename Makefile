@@ -42,6 +42,11 @@ APP_PATH="./cmd/twitch-clips"
 
 #ARGS
 
+## if CLIENT_ID argument is empty use default (from environment variable: TWITCH_CLIENT_ID)
+CLIENT_ID ?= $(TWITCH_CLIENT_ID)
+## if CHANNEL argument is empty use default (from environment variable: TWITCH_CHANNEL)
+CHANNEL ?= $(TWITCH_CHANNEL)
+
 default: build
 
 build: clean
@@ -53,7 +58,7 @@ clean:
 format:
 	$(GOFORMAT) "./..."
 run: build
-	./$(BINARY_NAME) -client-id $(CLIENT_ID) -channel $(CHANNEL)
+	./$(BINARY_NAME) -client_id "$(CLIENT_ID)" -channel "$(CHANNEL)"
 update:
 	$(GOGET) -u all
 	$(GOMOD) tidy

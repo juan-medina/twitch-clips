@@ -16,10 +16,15 @@ First build the binary with
 make build
 ```
 
-### Run an specific day and part
+### Run with an specified client id and channel
 ```sh
-./build/twitch-clips -client-id xxxxx -channel yyyy
+./build/twitch-clips -client_id xxxxx -channel yyyy
 ```
+
+## Environment variables
+
+Instead of passing the client id and channel you could define the variables `TWITCH_CLIENT_ID` and `TWITCH_CHANNEL`
+
 ## Additional make commands
 
 - clean : clean the build
@@ -29,7 +34,9 @@ make build
 
 ## VS Code
 
-Include a `launch.json` that allow to debug in VS Code
+Include a `launch.json` that allow to debug in VS Code.
+
+*Note: You may need either to define environment variables in your system or add the arguments in the launch.json file*
 
 ## LICENSE
 ```

@@ -1,18 +1,18 @@
 /*
  * MIT License
- * 
+ *
  * Copyright (c) 2023 Juan Medina
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,9 +25,24 @@
 package main
 
 import (
+	"flag"
+	"os"
+
 	"github.com/juan-medina/twitch-clips/internal/cmd/extract"
 )
 
 func main() {
-	extract.Execute()
+
+	clientId := flag.String("client_id", os.Getenv("TWITCH_CLIENT_ID"), "Twitch Client Id, or set TWITCH_CLIENT_ID environment variable")
+	channel := flag.String("channel", os.Getenv("TWITCH_CHANNEL"), "Twitch Channel, or set TWITCH_CHANNEL environment variable")
+
+	flag.Parse()
+
+	if *clientId == "" || *channel == "" {
+		flag.Usage()
+		os.Exit(1)
+		return
+	}
+
+	extract.Execute(*clientId, *channel)
 }
