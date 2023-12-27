@@ -1,12 +1,12 @@
 # Twitch Clips
 
-List of Twitch clips on a given channel
+Create a list of Twitch clips on a given channel
 
 ## Run via makefile
 
 ### Run for a giving client id & channel
 ```sh
-make run CLIENT_ID="xxxx" CHANNEL="yyyy"
+make run CLIENT_ID="xxxx" SECRET="yyyy" CHANNEL="zzzz" OUTPUT="clips.csv"
 ```
 ## Run the compiled binary
 
@@ -18,12 +18,12 @@ make build
 
 ### Run with an specified client id and channel
 ```sh
-./build/twitch-clips -client_id xxxxx -channel yyyy
+./build/twitch-clips -client_id xxxx -secret yyyy -channel zzzz -output clips.csv
 ```
 
 ## Environment variables
 
-Instead of passing the client id and channel you could define the variables `TWITCH_CLIENT_ID` and `TWITCH_CHANNEL`
+Instead of passing the client id, secret and channel you could define the variables `TWITCH_CLIENT_ID`, `TWITCH_SECRET` and `TWITCH_CHANNEL`
 
 ## Additional make commands
 
@@ -40,7 +40,7 @@ Include a `launch.json` that allow to debug in VS Code.
 
 ## LICENSE
 ```
-Copyright (c) 2023 Juan Antonio Medina IglesiasMIT License
+MIT License
 
 Copyright (c) 2023 Juan Medina
 

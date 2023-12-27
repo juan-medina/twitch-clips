@@ -39,17 +39,19 @@ func main() {
 	log.Info().Msg("Twitch Clips by Juan Medina")
 
 	clientId := flag.String("client_id", os.Getenv("TWITCH_CLIENT_ID"), "Twitch Client Id, or set TWITCH_CLIENT_ID environment variable")
+	secret := flag.String("secret", os.Getenv("TWITCH_SECRET"), "Twitch Secret, or set TWITCH_SECRET environment variable")
 	channel := flag.String("channel", os.Getenv("TWITCH_CHANNEL"), "Twitch Channel, or set TWITCH_CHANNEL environment variable")
+	output := flag.String("output", "clips.csv", "Output file")
 
 	flag.Parse()
 
-	if *clientId == "" || *channel == "" {
+	if *clientId == "" || *channel == "" || *secret == "" {
 		flag.Usage()
 		os.Exit(1)
 		return
 	}
 
-	if err := extract.Execute(*clientId, *channel); err != nil {
+	if err := extract.Execute(*clientId, *secret, *channel, *output); err != nil {
 		log.Error().Err(err).Msg("failed to extract clips")
 		os.Exit(1)
 		return

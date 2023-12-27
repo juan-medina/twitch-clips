@@ -44,8 +44,12 @@ APP_PATH="./cmd/twitch-clips"
 
 ## if CLIENT_ID argument is empty use default (from environment variable: TWITCH_CLIENT_ID)
 CLIENT_ID ?= $(TWITCH_CLIENT_ID)
+## if SECRET argument is empty use default (from environment variable: TWITCH_SECRET)
+SECRET ?= $(TWITCH_SECRET)
 ## if CHANNEL argument is empty use default (from environment variable: TWITCH_CHANNEL)
 CHANNEL ?= $(TWITCH_CHANNEL)
+# if OUTPUT argument is empty use default ("clips.csv")
+OUTPUT ?= clips.csv
 
 default: build
 
@@ -58,7 +62,7 @@ clean:
 format:
 	$(GOFORMAT) "./..."
 run: build
-	./$(BINARY_NAME) -client_id "$(CLIENT_ID)" -channel "$(CHANNEL)"
+	./$(BINARY_NAME) -client_id "$(CLIENT_ID)" -secret "$(SECRET)" -channel "$(CHANNEL)" -output "$(OUTPUT)"
 update:
 	$(GOGET) -u all
 	$(GOMOD) tidy
