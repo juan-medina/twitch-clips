@@ -29,9 +29,14 @@ import (
 	"os"
 
 	"github.com/juan-medina/twitch-clips/internal/cmd/extract"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 func main() {
+
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	log.Info().Msg("Twitch Clips by Juan Medina")
 
 	clientId := flag.String("client_id", os.Getenv("TWITCH_CLIENT_ID"), "Twitch Client Id, or set TWITCH_CLIENT_ID environment variable")
 	channel := flag.String("channel", os.Getenv("TWITCH_CHANNEL"), "Twitch Channel, or set TWITCH_CHANNEL environment variable")
@@ -44,5 +49,9 @@ func main() {
 		return
 	}
 
-	extract.Execute(*clientId, *channel)
+	if err := extract.Execute(*clientId, *channel); err != nil {
+		log.Error().Err(err).Msg("failed to extract clips")
+		os.Exit(1)
+		return
+	}
 }

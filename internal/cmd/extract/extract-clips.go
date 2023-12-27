@@ -24,8 +24,11 @@
 
 package extract
 
-import "fmt"
+import (
+	"github.com/rs/zerolog/log"
+)
 
-func Execute(clientId string, channel string) {
-	fmt.Printf("Extracting clips from channel: [%v]\n", channel)
+func Execute(clientId string, channel string) error {
+	log.Info().Str("client_id", clientId).Str("channel", channel).Msg("extract clips")
+	return nil
 }
