@@ -1,0 +1,51 @@
+This application will extract in a CSV file all clips from a giving channel, this can be imported into google sheets or excel.
+
+To run this application you need to do:
+
+> twitch-clips -client_id xxxx -secret yyyy -channel zzzz -output clips.csv
+
+You can omit the parameter output if will be clips.csv by default.
+
+> twitch-clips -client_id xxxx -secret yyyy -channel zzzz
+
+To generate a client id and a secret you need to go to twitch developer console.
+
+https://dev.twitch.tv/console
+
+Then click on: Register Your Application
+
+Give it a Name, however some words are forbidden such "Clip" or "Twitch", use something like: 
+
+My <User> App
+
+In OAuth Redirect URL just type:
+
+https://localhost
+
+In Category you could use: Application Integration
+
+In Client Type choose : Confidential
+
+This will generate a Client Id.
+
+To generate a secret click on: New secret
+
+Write those down so you can use then with this program.
+
+Alternatively, if you don't want to write those every time you can set the environment variables:
+
+TWITCH_CLIENT_ID and TWITCH_SECRET with these values, you can set those in:
+
+    Windows Key + Q 
+    Type: View Advanced System Settings 
+    Click: Environment Variables
+    Click, for each variable: New
+    Set as Variable name TWITCH_CLIENT_ID or TWITCH_SECRET and they corresponding values
+
+Doing so you can invoke the application with
+
+> twitch-clips -channel zzzz -output clips.csv
+
+As before you can omit the parameter output if will be clips.csv by default.
+
+> twitch-clips -channel zzzz
