@@ -22,34 +22,44 @@
  * SOFTWARE.
  */
 
-package extract
+package csv
 
 import (
-	"fmt"
+	"encoding/csv"
+	"os"
 
-	"github.com/juan-medina/twitch-clips/internal/csv"
 	"github.com/juan-medina/twitch-clips/internal/twitch"
 	"github.com/rs/zerolog/log"
 )
 
-func Execute(clientId string, secret string, channel string, filename string) error {
-	log.Info().Str("client_id", clientId).Str("channel", channel).Msg("extract clips")
-	if client, err := twitch.GetClient(clientId, secret); err == nil {
-		if broadcasterId, err := twitch.GetBroadcasterId(client, channel); err == nil {
-			if clips, err := twitch.GetClips(client, broadcasterId); err == nil {
-				log.Info().Int("clips", len(clips)).Msg("got clips")
-				if err := csv.WriteClipInfoToCSV(filename, clips); err != nil {
-					return fmt.Errorf("fail to write clips to csv: %w", err)
-				}
-			} else {
-				return err
-			}
-		} else {
-			return err
-		}
-	} else {
+func WriteClipInfoToCSV(filename string, data []twitch.ClipInfo) error {
+	log.Info().Str("filename", filename).Msg("writing clip info to csv")
+	// Create a new CSV file
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	// Create a CSV writer
+	writer := csv.NewWriter(file)
+
+	// Write header row
+	header := []string{"Title", "Game", "Date", "URL"}
+	if err = writer.Write(header); err != nil {
 		return err
 	}
 
-	return nil
+	// Write data rows
+	for _, clip := range data {
+		row := []string{clip.Title, clip.Game, clip.Date.Format("2006-01-02T15:04:05"), clip.URL}
+		if err = writer.Write(row); err != nil {
+			return err
+		}
+	}
+
+	// Flush the writer to write any buffered data to the file
+	writer.Flush()
+
+	return writer.Error()
 }

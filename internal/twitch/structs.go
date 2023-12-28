@@ -22,34 +22,13 @@
  * SOFTWARE.
  */
 
-package extract
+package twitch
 
-import (
-	"fmt"
+import "time"
 
-	"github.com/juan-medina/twitch-clips/internal/csv"
-	"github.com/juan-medina/twitch-clips/internal/twitch"
-	"github.com/rs/zerolog/log"
-)
-
-func Execute(clientId string, secret string, channel string, filename string) error {
-	log.Info().Str("client_id", clientId).Str("channel", channel).Msg("extract clips")
-	if client, err := twitch.GetClient(clientId, secret); err == nil {
-		if broadcasterId, err := twitch.GetBroadcasterId(client, channel); err == nil {
-			if clips, err := twitch.GetClips(client, broadcasterId); err == nil {
-				log.Info().Int("clips", len(clips)).Msg("got clips")
-				if err := csv.WriteClipInfoToCSV(filename, clips); err != nil {
-					return fmt.Errorf("fail to write clips to csv: %w", err)
-				}
-			} else {
-				return err
-			}
-		} else {
-			return err
-		}
-	} else {
-		return err
-	}
-
-	return nil
+type ClipInfo struct {
+	URL   string
+	Title string
+	Game  string
+	Date  time.Time
 }
