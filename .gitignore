@@ -2,6 +2,9 @@
 .vscode/**
 .idea/**
 
+# include .vscode/launch.json
+!.vscode/launch.json
+
 # Ignore directories containing binaries generated and other stuff
 tmp/**
 bin/**

@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Application",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/twitch-clips",
+            // pass in args or define environment variables TWITCH_CLIENT_ID and TWITCH_CHANNEL
+            // "args": ["-client-id", "xxxx", "-channel", "yyyy"],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
