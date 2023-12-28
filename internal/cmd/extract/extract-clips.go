@@ -28,6 +28,7 @@ import (
 	"encoding/csv"
 	"errors"
 	"fmt"
+	"math"
 	"os"
 	"sort"
 	"time"
@@ -169,18 +170,33 @@ func getMapOfGameIdsToGameNames(client *helix.Client, clips []clipInfo) (map[str
 
 	log.Info().Strs("game_ids", uniqueGameIds).Msg("getting games names")
 
-	if resp, err := client.GetGames(&helix.GamesParams{
-		IDs: uniqueGameIds,
-	}); err == nil {
-		if resp.StatusCode == 200 {
-			for _, game := range resp.Data.Games {
-				result[game.ID] = game.Name
+	// we can get 100 games at max, so we need to get them in batches
+	batchSize := 100
+	batches := int(math.Ceil(float64(len(uniqueGameIds)) / float64(batchSize)))
+	for i := 0; i < batches; i++ {
+		log.Info().Int("batch", i+1).Int("batches", batches).Msg("getting games names")
+		end := int(math.Min(float64(i+1)*float64(batchSize), float64(len(uniqueGameIds))))
+		gameIds := uniqueGameIds[i*batchSize : end]
+		if resp, err := client.GetGames(&helix.GamesParams{
+			IDs: gameIds,
+		}); err == nil {
+			if resp.StatusCode == 200 {
+				for _, game := range resp.Data.Games {
+					result[game.ID] = game.Name
+				}
+			} else {
+				err = errors.New("fail to get games")
+				log.Err(err).Int("status_code", resp.ErrorStatus).Str("error", resp.Error).Str("description", resp.ErrorMessage).Msg("request failed")
+				return nil, err
 			}
 		} else {
-			err = errors.New("fail to get games")
-			log.Err(err).Int("status_code", resp.ErrorStatus).Str("error", resp.Error).Str("description", resp.ErrorMessage).Msg("request failed")
 			return nil, err
 		}
+	}
+
+	//output to log all game names
+	for gameId, gameName := range result {
+		log.Info().Str("game_id", gameId).Str("game_name", gameName).Msg("game name")
 	}
 	return result, nil
 }
