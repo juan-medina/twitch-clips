@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-name: Release
+name: Tags
 
 on:
   push:
@@ -32,14 +32,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: juliangruber/git-log-action@v1
-        id: git-log
+      - uses: git-chglog/action@v1.3.2
         with:
-          format: '%s (%h)'
-          from: 'latest-tag'
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
       - uses: taiki-e/create-gh-release-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
-          body: ${{ steps.git-log.outputs.commits }}
+          body: ${{ steps.changelog.outputs.content }}
