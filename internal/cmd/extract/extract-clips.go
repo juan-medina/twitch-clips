@@ -104,6 +104,7 @@ func getBroadcasterId(client *helix.Client, channel string) (string, error) {
 type clipInfo struct {
 	url   string
 	title string
+	game  string
 	date  time.Time
 }
 
@@ -123,6 +124,7 @@ func getClipsAfter(client *helix.Client, broadcasterId string, after string) ([]
 					result = append(result, clipInfo{
 						url:   clip.URL,
 						title: clip.Title,
+						game:  clip.GameID,
 						date:  date,
 					})
 				} else {
@@ -152,13 +154,44 @@ func getClips(client *helix.Client, broadcasterId string) ([]clipInfo, error) {
 	for continueGet {
 		if clips, newAfter, err := getClipsAfter(client, broadcasterId, after); err == nil {
 			result = append(result, clips...)
-			if len(clips) == 0 || len(clips) < 100 {
+			if newAfter == "" {
 				continueGet = false
 			}
 			after = newAfter
 		} else {
 			return nil, err
 		}
+	}
+
+	// create a map of game ids to game names
+	gameNames := make(map[string]string)
+
+	for _, clip := range result {
+		gameNames[clip.game] = clip.game
+	}
+
+	// get the keys from map
+	gameIds := make([]string, 0, len(gameNames))
+	for k := range gameNames {
+		gameIds = append(gameIds, k)
+	}
+
+	if resp, err := client.GetGames(&helix.GamesParams{
+		IDs: gameIds,
+	}); err == nil {
+		if resp.StatusCode == 200 {
+			for _, game := range resp.Data.Games {
+				gameNames[game.ID] = game.Name
+			}
+		} else {
+			err = errors.New("fail to get games")
+			log.Err(err).Int("status_code", resp.ErrorStatus).Str("error", resp.Error).Str("description", resp.ErrorMessage).Msg("request failed")
+			return result, err
+		}
+	}
+
+	for i, clip := range result {
+		result[i].game = gameNames[clip.game]
 	}
 
 	// sort by date, desc
@@ -181,14 +214,14 @@ func writeClipInfoToCSV(filename string, data []clipInfo) error {
 	writer := csv.NewWriter(file)
 
 	// Write header row
-	header := []string{"Title", "Date", "URL"}
+	header := []string{"Title", "Game", "Date", "URL"}
 	if err = writer.Write(header); err != nil {
 		return err
 	}
 
 	// Write data rows
 	for _, clip := range data {
-		row := []string{clip.title, clip.date.Format(time.RFC3339), clip.url}
+		row := []string{clip.title, clip.game, clip.date.Format("2006-01-02T15:04:05"), clip.url}
 		if err = writer.Write(row); err != nil {
 			return err
 		}
