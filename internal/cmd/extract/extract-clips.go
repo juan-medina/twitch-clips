@@ -144,6 +144,47 @@ func getClipsAfter(client *helix.Client, broadcasterId string, after string) ([]
 	return result, newAfter, nil
 }
 
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
+func getUniqueGameIds(clips []clipInfo) []string {
+	gameIds := []string{}
+	for _, clip := range clips {
+		if !contains(gameIds, clip.game) {
+			gameIds = append(gameIds, clip.game)
+		}
+	}
+	return gameIds
+}
+
+func getMapOfGameIdsToGameNames(client *helix.Client, clips []clipInfo) (map[string]string, error) {
+	uniqueGameIds := getUniqueGameIds(clips)
+	result := make(map[string]string)
+
+	log.Info().Strs("game_ids", uniqueGameIds).Msg("getting games names")
+
+	if resp, err := client.GetGames(&helix.GamesParams{
+		IDs: uniqueGameIds,
+	}); err == nil {
+		if resp.StatusCode == 200 {
+			for _, game := range resp.Data.Games {
+				result[game.ID] = game.Name
+			}
+		} else {
+			err = errors.New("fail to get games")
+			log.Err(err).Int("status_code", resp.ErrorStatus).Str("error", resp.Error).Str("description", resp.ErrorMessage).Msg("request failed")
+			return nil, err
+		}
+	}
+	return result, nil
+}
+
 func getClips(client *helix.Client, broadcasterId string) ([]clipInfo, error) {
 	result := []clipInfo{}
 	log.Info().Str("broadcaster_id", broadcasterId).Msg("getting clips")
@@ -163,35 +204,13 @@ func getClips(client *helix.Client, broadcasterId string) ([]clipInfo, error) {
 		}
 	}
 
-	// create a map of game ids to game names
-	gameNames := make(map[string]string)
-
-	for _, clip := range result {
-		gameNames[clip.game] = clip.game
-	}
-
-	// get the keys from map
-	gameIds := make([]string, 0, len(gameNames))
-	for k := range gameNames {
-		gameIds = append(gameIds, k)
-	}
-
-	if resp, err := client.GetGames(&helix.GamesParams{
-		IDs: gameIds,
-	}); err == nil {
-		if resp.StatusCode == 200 {
-			for _, game := range resp.Data.Games {
-				gameNames[game.ID] = game.Name
-			}
-		} else {
-			err = errors.New("fail to get games")
-			log.Err(err).Int("status_code", resp.ErrorStatus).Str("error", resp.Error).Str("description", resp.ErrorMessage).Msg("request failed")
-			return result, err
+	// get the game names
+	if gameNames, err := getMapOfGameIdsToGameNames(client, result); err == nil {
+		for i, clip := range result {
+			result[i].game = gameNames[clip.game]
 		}
-	}
-
-	for i, clip := range result {
-		result[i].game = gameNames[clip.game]
+	} else {
+		return nil, err
 	}
 
 	// sort by date, desc
