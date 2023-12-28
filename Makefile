@@ -66,3 +66,11 @@ run: build
 update:
 	$(GOGET) -u all
 	$(GOMOD) tidy
+publish:
+# give error if parameter VERSION has not been provided
+ifndef VERSION
+	$(error "VERSION is not set")
+else
+	git tag -a v$(VERSION)
+	gh release create v$(VERSION) --title v$(VERSION) --notes "Release v$(VERSION)" --generate-notes
+endif	
