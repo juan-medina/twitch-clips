@@ -73,5 +73,5 @@ ifndef VERSION
 else
 	git tag -a v$(VERSION) -m "Release v$(VERSION)"
 	git push --tags
-	gh release create v$(VERSION) --title v$(VERSION) --notes "Release v$(VERSION)" --generate-notes
+	gh release create v$(VERSION) --generate-notes
 endif	
