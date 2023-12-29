@@ -1,6 +1,6 @@
 # Twitch Clips
 
-Create a list of Twitch clips on a given channel
+Create a list of Twitch clips on a given channel that can be imported in Excel or Google sheets.
 
 ## Example output
 
@@ -11,28 +11,47 @@ Clip Two,One Game,2023-12-22T21:42:23,https://clips.twitch.tv/url2-2zd1OiY4ZvfeP
 More clip,Other Game,2023-21-21T31:52:23,https://clips.twitch.tv/url3-2zd1OiY4ZvfeP44Q
 ```
 
+## Releases 
+
+You can download the last available release [here](https://github.com/juan-medina/twitch-clips/releases/latest)
+
+We provide binary versions for Windows, Linux & MacOS.
+
+Follow the [instructions](INSTRUCTIONS.txt) contained within the zip for your platform.
+
+*Note: Your antivirus software may delete the application downloaded from this package, and is because executables need to be signed by a certification company to be trusted, unfortunately this as a hobby project that does not allow me to pay for a certification, but you have access to the full source code, you can run it yourself and even look at what actually does.*
+
 ## Run via makefile
 
 ### Run for a giving client id & channel
 ```sh
-make run CLIENT_ID="xxxx" SECRET="yyyy" CHANNEL="zzzz" OUTPUT="clips.csv"
+make run CLIENT_ID="xxxx" SECRET="yyyy" CHANNEL="zzzz" OUTPUT="clips.csv" DATE_FROM="2023-11-01" DATE_TO="2023-11-15"
 ```
 ## Run the compiled binary
 
-First build the binary with
+First build the binary with:
 
 ```sh
 make build
 ```
 
 ### Run with an specified client id and channel
+
 ```sh
-./build/twitch-clips -client_id xxxx -secret yyyy -channel zzzz -output clips.csv
+./build/twitch-clips -client_id xxxx -secret yyyy -channel zzzz -output clips.csv -date_from="2023-11-01" -date_to="2023-11-15"
 ```
+
+## Date From & To
+
+These arguments are optional and they could define a window for the clips to be retrieved, however we can not bypass the way the twitch API handle these arguments.
+
+If you specify a date from, but not a date to, it will return the clips from that date to two weeks after.
+
+If you specify a date to, but not a date from, it will return all the clips without considering any date.
 
 ## Environment variables
 
-Instead of passing the client id, secret and channel you could define the variables `TWITCH_CLIENT_ID`, `TWITCH_SECRET` and `TWITCH_CHANNEL`
+Instead of passing the client id, secret and channel you could define the variables `TWITCH_CLIENT_ID`, `TWITCH_SECRET` and `TWITCH_CHANNEL`.
 
 ## Additional make commands
 
@@ -40,12 +59,18 @@ Instead of passing the client id, secret and channel you could define the variab
 - format : format the code
 - vet : basic checks
 - update : update dependencies & remove unused
+- publish : creates a new release and publish it
 
 ## VS Code
 
 Include a `launch.json` that allow to debug in VS Code.
 
-*Note: You may need either to define environment variables in your system or add the arguments in the launch.json file*
+*Note: You may need either to define environment variables in your system or add the arguments in the [launch.json](.vscode/launch.json) file*
+
+## This software uses
+
+- [Helix](https://github.com/nicklaw5/helix), a Twitch Helix API client written in Go (Golang).
+- [Zero Allocation JSON Logger](https://github.com/rs/zerolog) a fast and simple logger dedicated to JSON output.
 
 ## LICENSE
 ```

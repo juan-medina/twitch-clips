@@ -1,14 +1,22 @@
 This application will extract in a CSV file all clips from a giving channel, this can be imported into google sheets or excel.
 
-To run this application you need to do:
+To run this application you need to do from your command line in the path of where you unzip this application:
 
-> twitch-clips -client_id xxxx -secret yyyy -channel zzzz -output clips.csv
+> twitch-clips -client_id xxxx -secret yyyy -channel zzzz -output clips.csv -date_from="2023-11-01" -date_to="2023-11-15"
 
-You can omit the parameter output if will be clips.csv by default.
+You can omit the parameter output it will be clips.csv by default.
+
+Additionally you can omit as well the date from/to parameters to return clips for all dates.
 
 > twitch-clips -client_id xxxx -secret yyyy -channel zzzz
 
-To generate a client id and a secret you need to go to twitch developer console.
+The optional date from/to arguments could not bypass the way the twitch API handle these arguments.
+
+If you specify a date from, but not a date to, it will return the clips from that date to two weeks after.
+
+If you specify a date to, but not a date from, it will return all the clips without considering any date.
+
+If you need to generate a client id and a secret you could do that in the twitch developer console:
 
 https://dev.twitch.tv/console
 
@@ -18,41 +26,43 @@ Give it a Name, however some words are forbidden such "Clip" or "Twitch", use so
 
 My <User> App
 
-In OAuth Redirect URL just type:
+In OAuth Redirect URL, this will be not be used however needs to be set, just type:
 
 https://localhost
 
 In Category you could use: Application Integration
 
-In Client Type choose : Confidential
+In Client Type choose, since this just run in your computer : Confidential
 
 This will generate a Client Id.
 
 To generate a secret click on: New secret
 
-Write those down so you can use then with this program.
+Write these down so you can use then with this program.
 
-Alternatively, if you don't want to write those every time you can set the environment variables:
+Alternatively, if you don't want to type/copy those every time you can set these environment variables:
 
-TWITCH_CLIENT_ID and TWITCH_SECRET with these values.
+TWITCH_CLIENT_ID and TWITCH_SECRET with the corresponding values.
 
-You can set those in Window following these steps:
+You can set those in Windows following these steps:
 
     Windows Key + Q 
     Type: View Advanced System Settings 
     Click: Environment Variables
     Click, for each variable: New
-    Set as Variable name TWITCH_CLIENT_ID or TWITCH_SECRET and they corresponding values
+    Set as Variable name TWITCH_CLIENT_ID or TWITCH_SECRET and it corresponding value.
 
-For Linux and & MacOS you can add the environment variable to your shell profile script
+For Linux and & MacOS you can add the environment variable to your shell profile such .bashrc
+    export TWITCH_CLIENT_ID="your application client id"
+    export TWITCH_SECRET="your application secret"
 
-When the variables are set you can run the application with
+When the variables are set you can run the application with:
 
-> twitch-clips -channel zzzz -output clips.csv
+> twitch-clips -channel zzzz -output clips.csv -date_from="2023-11-01" -date_to="2023-11-15"
 
-As before you can omit the parameter output if will be clips.csv by default.
+As before you can omit the parameters output and dates:
 
-> twitch-clips -channel zzzz
+> twitch-clips -channel zzzz 
 
 MIT License
 

@@ -62,7 +62,7 @@ clean:
 format:
 	$(GOFORMAT) "./..."
 run: build
-	./$(BINARY_NAME) -client_id "$(CLIENT_ID)" -secret "$(SECRET)" -channel "$(CHANNEL)" -output "$(OUTPUT)"
+	./$(BINARY_NAME) -client_id "$(CLIENT_ID)" -secret "$(SECRET)" -channel "$(CHANNEL)" -output "$(OUTPUT)" -date_from "$(DATE_FROM)" -date_to "$(DATE_TO)"
 update:
 	$(GOGET) -u all
 	$(GOMOD) tidy

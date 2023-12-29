@@ -32,6 +32,10 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+const (
+	DateFormat = "2006-01-02T15:04:05"
+)
+
 func WriteClipInfoToCSV(filename string, data []twitch.ClipInfo) error {
 	log.Info().Str("filename", filename).Msg("writing clip info to csv")
 	// Create a new CSV file
@@ -52,7 +56,7 @@ func WriteClipInfoToCSV(filename string, data []twitch.ClipInfo) error {
 
 	// Write data rows
 	for _, clip := range data {
-		row := []string{clip.Title, clip.Game, clip.Date.Format("2006-01-02T15:04:05"), clip.URL}
+		row := []string{clip.Title, clip.Game, clip.Date.Format(DateFormat), clip.URL}
 		if err = writer.Write(row); err != nil {
 			return err
 		}

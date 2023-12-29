@@ -29,11 +29,12 @@ import (
 	"sort"
 	"time"
 
+	"github.com/juan-medina/twitch-clips/internal/times"
 	"github.com/nicklaw5/helix/v2"
 	"github.com/rs/zerolog/log"
 )
 
-func GetClips(client *helix.Client, broadcasterId string) ([]ClipInfo, error) {
+func GetClips(client *helix.Client, broadcasterId string, from time.Time, to time.Time) ([]ClipInfo, error) {
 	result := []ClipInfo{}
 	log.Info().Str("broadcaster_id", broadcasterId).Msg("getting clips")
 
@@ -41,7 +42,7 @@ func GetClips(client *helix.Client, broadcasterId string) ([]ClipInfo, error) {
 	after := ""
 
 	for continueGet {
-		if clips, newAfter, err := getClipsAfter(client, broadcasterId, after); err == nil {
+		if clips, newAfter, err := getClipsAfter(client, broadcasterId, after, from, to); err == nil {
 			result = append(result, clips...)
 			if newAfter == "" {
 				continueGet = false
@@ -69,16 +70,36 @@ func GetClips(client *helix.Client, broadcasterId string) ([]ClipInfo, error) {
 	return result, nil
 }
 
-func getClipsAfter(client *helix.Client, broadcasterId string, after string) ([]ClipInfo, string, error) {
+func getClipsAfter(client *helix.Client, broadcasterId string, after string, from time.Time, to time.Time) ([]ClipInfo, string, error) {
 	result := []ClipInfo{}
 	newAfter := after
-	log.Info().Str("broadcaster_id", broadcasterId).Str("after", after).Msg("getting clips after")
+	l := log.Info().Str("broadcaster_id", broadcasterId).Str("after", after)
 
-	if resp, err := client.GetClips(&helix.ClipsParams{
+	if from != times.NilDateTime {
+		l = l.Time("from", from)
+	}
+
+	if to != times.NilDateTime {
+		l = l.Time("to", to)
+	}
+
+	l.Msg("getting clips after")
+
+	params := helix.ClipsParams{
 		BroadcasterID: broadcasterId,
 		First:         100,
 		After:         after,
-	}); err == nil {
+	}
+
+	if from != times.NilDateTime {
+		params.StartedAt = helix.Time{Time: from}
+	}
+
+	if to != times.NilDateTime {
+		params.EndedAt = helix.Time{Time: to}
+	}
+
+	if resp, err := client.GetClips(&params); err == nil {
 		if resp.StatusCode == 200 {
 			for _, clip := range resp.Data.Clips {
 				if date, err := time.Parse(time.RFC3339, clip.CreatedAt); err == nil {

@@ -27,8 +27,10 @@ package main
 import (
 	"flag"
 	"os"
+	"time"
 
 	"github.com/juan-medina/twitch-clips/internal/cmd/extract"
+	"github.com/juan-medina/twitch-clips/internal/times"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -43,6 +45,9 @@ func main() {
 	channel := flag.String("channel", os.Getenv("TWITCH_CHANNEL"), "Twitch Channel, or set TWITCH_CHANNEL environment variable")
 	output := flag.String("output", "clips.csv", "Output file")
 
+	from := flag.String("date_from", "", "Date Time from in format: "+times.DateFormat)
+	to := flag.String("date_to", "", "Date Time to in format: "+times.DateFormat)
+
 	flag.Parse()
 
 	if *clientId == "" || *channel == "" || *secret == "" {
@@ -51,7 +56,28 @@ func main() {
 		return
 	}
 
-	if err := extract.Execute(*clientId, *secret, *channel, *output); err != nil {
+	timeFrom := times.NilDateTime
+	timeTo := times.NilDateTime
+
+	if *from != "" {
+		var err error
+		if timeFrom, err = time.Parse(times.DateFormat, *from); err != nil {
+			log.Error().Err(err).Msg("invalid from format")
+			os.Exit(1)
+			return
+		}
+	}
+
+	if *to != "" {
+		var err error
+		if timeTo, err = time.Parse(times.DateFormat, *to); err != nil {
+			log.Error().Err(err).Msg("invalid to format")
+			os.Exit(1)
+			return
+		}
+	}
+
+	if err := extract.Execute(*clientId, *secret, *channel, *output, timeFrom, timeTo); err != nil {
 		log.Error().Err(err).Msg("failed to extract clips")
 		os.Exit(1)
 		return

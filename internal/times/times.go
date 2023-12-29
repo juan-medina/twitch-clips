@@ -22,35 +22,22 @@
  * SOFTWARE.
  */
 
-package extract
+package times
 
-import (
-	"fmt"
-	"time"
+import "time"
 
-	"github.com/juan-medina/twitch-clips/internal/csv"
-	"github.com/juan-medina/twitch-clips/internal/twitch"
-	"github.com/rs/zerolog/log"
+// constant
+const (
+	DateFormat = "2006-01-02"
+	NilDate    = "0001-01-01"
 )
 
-func Execute(clientId string, secret string, channel string, filename string, from time.Time, to time.Time) error {
-	log.Info().Str("client_id", clientId).Str("channel", channel).Msg("extract clips")
-	if client, err := twitch.GetClient(clientId, secret); err == nil {
-		if broadcasterId, err := twitch.GetBroadcasterId(client, channel); err == nil {
-			if clips, err := twitch.GetClips(client, broadcasterId, from, to); err == nil {
-				log.Info().Int("clips", len(clips)).Msg("got clips")
-				if err := csv.WriteClipInfoToCSV(filename, clips); err != nil {
-					return fmt.Errorf("fail to write clips to csv: %w", err)
-				}
-			} else {
-				return err
-			}
-		} else {
-			return err
-		}
-	} else {
-		return err
-	}
+var NilDateTime time.Time
 
-	return nil
+func init() {
+	var err error
+	NilDateTime, err = time.Parse(DateFormat, NilDate)
+	if err != nil {
+		panic(err)
+	}
 }
