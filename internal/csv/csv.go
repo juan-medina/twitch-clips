@@ -27,6 +27,7 @@ package csv
 import (
 	"encoding/csv"
 	"os"
+	"strconv"
 
 	"github.com/juan-medina/twitch-clips/internal/twitch"
 	"github.com/rs/zerolog/log"
@@ -49,14 +50,14 @@ func WriteClipInfoToCSV(filename string, data []twitch.ClipInfo) error {
 	writer := csv.NewWriter(file)
 
 	// Write header row
-	header := []string{"Title", "Game", "Date", "URL"}
+	header := []string{"Title", "Game", "Date", "Views", "URL"}
 	if err = writer.Write(header); err != nil {
 		return err
 	}
 
 	// Write data rows
 	for _, clip := range data {
-		row := []string{clip.Title, clip.Game, clip.Date.Format(DateFormat), clip.URL}
+		row := []string{clip.Title, clip.Game, clip.Date.Format(DateFormat), strconv.Itoa(clip.Views), clip.URL}
 		if err = writer.Write(row); err != nil {
 			return err
 		}

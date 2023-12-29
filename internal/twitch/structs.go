@@ -31,4 +31,5 @@ type ClipInfo struct {
 	Title string
 	Game  string
 	Date  time.Time
+	Views int
 }

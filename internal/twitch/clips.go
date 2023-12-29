@@ -108,6 +108,7 @@ func getClipsAfter(client *helix.Client, broadcasterId string, after string, fro
 						Title: clip.Title,
 						Game:  clip.GameID,
 						Date:  date,
+						Views: clip.ViewCount,
 					})
 				} else {
 					log.Err(err).Str("date", clip.CreatedAt).Msg("fail to parse date")
