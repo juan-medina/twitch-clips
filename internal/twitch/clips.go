@@ -34,7 +34,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func GetClips(client *helix.Client, broadcasterId string, from time.Time, to time.Time) ([]ClipInfo, error) {
+func GetClips(client *helix.Client, broadcasterId string, from time.Time, to time.Time, sortBy SortBy) ([]ClipInfo, error) {
 	result := []ClipInfo{}
 	log.Info().Str("broadcaster_id", broadcasterId).Msg("getting clips")
 
@@ -64,6 +64,9 @@ func GetClips(client *helix.Client, broadcasterId string, from time.Time, to tim
 
 	// sort by date, desc
 	sort.Slice(result, func(i, j int) bool {
+		if sortBy == SortByViews {
+			return result[i].Views > result[j].Views
+		}
 		return result[i].Date.After(result[j].Date)
 	})
 

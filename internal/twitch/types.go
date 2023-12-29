@@ -33,3 +33,10 @@ type ClipInfo struct {
 	Date  time.Time
 	Views int
 }
+
+type SortBy string
+
+const (
+	SortByViews SortBy = "SORT_VIEWS"
+	SortByDate  SortBy = "SORT_DATE"
+)

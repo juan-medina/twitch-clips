@@ -33,11 +33,11 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func Execute(clientId string, secret string, channel string, filename string, from time.Time, to time.Time) error {
+func Execute(clientId string, secret string, channel string, filename string, from time.Time, to time.Time, sortBy twitch.SortBy) error {
 	log.Info().Str("client_id", clientId).Str("channel", channel).Msg("extract clips")
 	if client, err := twitch.GetClient(clientId, secret); err == nil {
 		if broadcasterId, err := twitch.GetBroadcasterId(client, channel); err == nil {
-			if clips, err := twitch.GetClips(client, broadcasterId, from, to); err == nil {
+			if clips, err := twitch.GetClips(client, broadcasterId, from, to, sortBy); err == nil {
 				log.Info().Int("clips", len(clips)).Msg("got clips")
 				if err := csv.WriteClipInfoToCSV(filename, clips); err != nil {
 					return fmt.Errorf("fail to write clips to csv: %w", err)

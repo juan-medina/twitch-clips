@@ -25,7 +25,7 @@ Follow the [instructions](INSTRUCTIONS.txt) contained within the zip for your pl
 
 ### Run for a giving client id & channel
 ```sh
-make run CLIENT_ID="xxxx" SECRET="yyyy" CHANNEL="zzzz" OUTPUT="clips.csv" DATE_FROM="2023-11-01" DATE_TO="2023-11-15"
+make run CLIENT_ID="xxxx" SECRET="yyyy" CHANNEL="zzzz" OUTPUT="clips.csv" DATE_FROM="2023-11-01" DATE_TO="2023-11-15" SORT_BY="DATE"
 ```
 ## Run the compiled binary
 
@@ -38,7 +38,7 @@ make build
 ### Run with an specified client id and channel
 
 ```sh
-./build/twitch-clips -client_id xxxx -secret yyyy -channel zzzz -output clips.csv -date_from="2023-11-01" -date_to="2023-11-15"
+./build/twitch-clips -client_id xxxx -secret yyyy -channel zzzz -output clips.csv -date_from="2023-11-01" -date_to="2023-11-15" -sort_by=DATE
 ```
 
 ## Date From & To

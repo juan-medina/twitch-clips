@@ -31,6 +31,7 @@ import (
 
 	"github.com/juan-medina/twitch-clips/internal/cmd/extract"
 	"github.com/juan-medina/twitch-clips/internal/times"
+	"github.com/juan-medina/twitch-clips/internal/twitch"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -47,6 +48,8 @@ func main() {
 
 	from := flag.String("date_from", "", "Date Time from in format: "+times.DateFormat)
 	to := flag.String("date_to", "", "Date Time to in format: "+times.DateFormat)
+
+	sort := flag.String("sort_by", "DATE", "Sort by: DATE or VIEWS")
 
 	flag.Parse()
 
@@ -77,7 +80,20 @@ func main() {
 		}
 	}
 
-	if err := extract.Execute(*clientId, *secret, *channel, *output, timeFrom, timeTo); err != nil {
+	sortBy := twitch.SortByDate
+
+	if *sort != "" {
+		*sort = "SORT_" + *sort
+		if *sort != string(twitch.SortByDate) && *sort != string(twitch.SortByViews) {
+			flag.Usage()
+			os.Exit(1)
+			return
+		} else {
+			sortBy = twitch.SortBy(*sort)
+		}
+	}
+
+	if err := extract.Execute(*clientId, *secret, *channel, *output, timeFrom, timeTo, sortBy); err != nil {
 		log.Error().Err(err).Msg("failed to extract clips")
 		os.Exit(1)
 		return

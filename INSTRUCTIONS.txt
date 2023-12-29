@@ -2,9 +2,11 @@ This application will extract in a CSV file all clips from a giving channel, thi
 
 To run this application you need to do from your command line in the path of where you unzip this application:
 
-> twitch-clips -client_id xxxx -secret yyyy -channel zzzz -output clips.csv -date_from="2023-11-01" -date_to="2023-11-15"
+> twitch-clips -client_id xxxx -secret yyyy -channel zzzz -output clips.csv -date_from="2023-11-01" -date_to="2023-11-15" -sort_by=DATE
 
 You can omit the parameter output it will be clips.csv by default.
+
+Sort By is optional and can be either DATE or VIEWS, DATE by default.
 
 Additionally you can omit as well the date from/to parameters to return clips for all dates.
 
@@ -58,9 +60,9 @@ For Linux and & MacOS you can add the environment variable to your shell profile
 
 When the variables are set you can run the application with:
 
-> twitch-clips -channel zzzz -output clips.csv -date_from="2023-11-01" -date_to="2023-11-15"
+> twitch-clips -channel zzzz -output clips.csv -date_from="2023-11-01" -date_to="2023-11-15" -sort_by=DATE
 
-As before you can omit the parameters output and dates:
+As before you can omit the parameters output, sort by and dates:
 
 > twitch-clips -channel zzzz 
 
